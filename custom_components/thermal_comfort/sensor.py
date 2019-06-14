@@ -15,6 +15,7 @@ from homeassistant.const import DEVICE_CLASS_HUMIDITY
 from homeassistant.const import DEVICE_CLASS_TEMPERATURE
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.const import STATE_UNKNOWN
+from homeassistant.const import TEMP_FAHRENHEIT
 from homeassistant.exceptions import TemplateError
 from homeassistant.helpers.entity import async_generate_entity_id
 from homeassistant.helpers.entity import Entity
@@ -147,7 +148,12 @@ class SensorThermalComfort(Entity):
             and new_state.state != STATE_UNKNOWN
             and new_state.state != STATE_UNAVAILABLE
         ):
-            self._temperature = float(new_state.state)
+            unit = new_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
+            temp = util.convert(new_state.state, float)
+            # convert to celsius if necessary
+            if unit == TEMP_FAHRENHEIT:
+                temp = util.temperature.fahrenheit_to_celsius(temp)
+            self._temperature = temp
 
         self.async_schedule_update_ha_state(True)
 
