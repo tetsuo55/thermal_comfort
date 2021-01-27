@@ -25,12 +25,16 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_TEMPERATURE_SENSOR = "temperature_sensor"
 CONF_HUMIDITY_SENSOR = "humidity_sensor"
+CONF_SENSOR_TYPES = "sensor_types"
 ATTR_HUMIDITY = "humidity"
+
+DEFAULT_SENSOR_TYPES = ["absolutehumidity", "heatindex", "dewpoint", "perception"]
 
 SENSOR_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_TEMPERATURE_SENSOR): cv.entity_id,
         vol.Required(CONF_HUMIDITY_SENSOR): cv.entity_id,
+        vol.Optional(CONF_SENSOR_TYPES, default=DEFAULT_SENSOR_TYPES): cv.ensure_list,
         vol.Optional(CONF_ICON_TEMPLATE): cv.template,
         vol.Optional(CONF_ENTITY_PICTURE_TEMPLATE): cv.template,
         vol.Optional(ATTR_FRIENDLY_NAME): cv.string,
@@ -58,23 +62,25 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     for device, device_config in config[CONF_SENSORS].items():
         temperature_entity = device_config.get(CONF_TEMPERATURE_SENSOR)
         humidity_entity = device_config.get(CONF_HUMIDITY_SENSOR)
+        config_sensor_types = device_config.get(CONF_SENSOR_TYPES)
         icon_template = device_config.get(CONF_ICON_TEMPLATE)
         entity_picture_template = device_config.get(CONF_ENTITY_PICTURE_TEMPLATE)
         friendly_name = device_config.get(ATTR_FRIENDLY_NAME, device)
 
         for sensor_type in SENSOR_TYPES:
-            sensors.append(
-                SensorThermalComfort(
-                    hass,
-                    device,
-                    temperature_entity,
-                    humidity_entity,
-                    friendly_name,
-                    icon_template,
-                    entity_picture_template,
-                    sensor_type,
+            if sensor_type in config_sensor_types :
+                sensors.append(
+                    SensorThermalComfort(
+                        hass,
+                        device,
+                        temperature_entity,
+                        humidity_entity,
+                        friendly_name,
+                        icon_template,
+                        entity_picture_template,
+                        sensor_type,
+                    )
                 )
-            )
     if not sensors:
         _LOGGER.error("No sensors added")
         return False
