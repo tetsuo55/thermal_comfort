@@ -7,5 +7,5 @@
   "codeowners": ["@dolezsa", "@poppypop"],
   "requirements": [],
   "version": "1.0.0",
-  "iot_class": "local_pull"
+  "iot_class": "calculated"
 }
