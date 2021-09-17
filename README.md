@@ -1,6 +1,6 @@
 # thermal_comfort
 
-Thermal Comfort sensor for HA (absolute humidity, heat index, dew point, thermal perception)
+Thermal Comfort sensor for HA (absolute humidity, heat index, dew point, thermal perception, summer simmer index)
 
 ## Usage
 
@@ -38,7 +38,7 @@ sensor:
 - sensor_types
 
 `sensor_types` is a list of sensors that must be created.
-It can be any of: "absolutehumidity", "heatindex", "dewpoint", "perception".
+It can be any of: "absolutehumidity", "heatindex", "dewpoint", "perception", "simmerindex", "simmerzone".
 If not provided, all sensors will be created.
 
 ## Screenshots
