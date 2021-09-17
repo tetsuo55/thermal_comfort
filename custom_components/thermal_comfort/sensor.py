@@ -4,26 +4,21 @@ from typing import Optional
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-
 from homeassistant import util
-from homeassistant.components.sensor import (
-    ENTITY_ID_FORMAT,
-    PLATFORM_SCHEMA,
-)
-from homeassistant.const import (
-    ATTR_FRIENDLY_NAME,
-    ATTR_TEMPERATURE,
-    ATTR_UNIT_OF_MEASUREMENT,
-    CONF_ENTITY_PICTURE_TEMPLATE,
-    CONF_ICON_TEMPLATE,
-    CONF_SENSORS,
-    DEVICE_CLASS_HUMIDITY,
-    DEVICE_CLASS_TEMPERATURE,
-    STATE_UNAVAILABLE,
-    STATE_UNKNOWN,
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
-)
+from homeassistant.components.sensor import ENTITY_ID_FORMAT
+from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.const import ATTR_FRIENDLY_NAME
+from homeassistant.const import ATTR_TEMPERATURE
+from homeassistant.const import ATTR_UNIT_OF_MEASUREMENT
+from homeassistant.const import CONF_ENTITY_PICTURE_TEMPLATE
+from homeassistant.const import CONF_ICON_TEMPLATE
+from homeassistant.const import CONF_SENSORS
+from homeassistant.const import DEVICE_CLASS_HUMIDITY
+from homeassistant.const import DEVICE_CLASS_TEMPERATURE
+from homeassistant.const import STATE_UNAVAILABLE
+from homeassistant.const import STATE_UNKNOWN
+from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import TEMP_FAHRENHEIT
 from homeassistant.exceptions import TemplateError
 from homeassistant.helpers.entity import async_generate_entity_id
 from homeassistant.helpers.entity import Entity
@@ -69,31 +64,11 @@ SENSOR_TYPES = {
         "Absolute Humidity",
         CONCENTRATION_GRAMS_PER_CUBIC_METER,
     ],
-    "heatindex": [
-        DEVICE_CLASS_TEMPERATURE,
-        "Heat Index",
-        TEMP_CELSIUS
-    ],
-    "dewpoint": [
-        DEVICE_CLASS_TEMPERATURE,
-        "Dew Point",
-        TEMP_CELSIUS
-    ],
-    "perception": [
-        None,
-        "Thermal Perception",
-        None
-    ],
-    "simmerindex": [
-        DEVICE_CLASS_TEMPERATURE,
-        "Simmer Index",
-        TEMP_CELSIUS
-    ],
-    "simmerzone": [
-        None,
-        "Simmer Zone",
-        None
-    ],
+    "heatindex": [DEVICE_CLASS_TEMPERATURE, "Heat Index", TEMP_CELSIUS],
+    "dewpoint": [DEVICE_CLASS_TEMPERATURE, "Dew Point", TEMP_CELSIUS],
+    "perception": [None, "Thermal Perception", None],
+    "simmerindex": [DEVICE_CLASS_TEMPERATURE, "Simmer Index", TEMP_CELSIUS],
+    "simmerzone": [None, "Simmer Zone", None],
 }
 
 
@@ -174,23 +149,35 @@ class SensorThermalComfort(Entity):
         )
 
         temperature_state = hass.states.get(temperature_entity)
-        if temperature_state and temperature_state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+        if temperature_state and temperature_state.state not in (
+            STATE_UNKNOWN,
+            STATE_UNAVAILABLE,
+        ):
             self._temperature = temperature_state_as_celcius(temperature_state)
 
         humidity_state = hass.states.get(humidity_entity)
-        if humidity_state and humidity_state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+        if humidity_state and humidity_state.state not in (
+            STATE_UNKNOWN,
+            STATE_UNAVAILABLE,
+        ):
             self._humidity = float(humidity_state.state)
 
     def temperature_state_listener(self, entity, old_state, new_state):
         """Handle temperature device state changes."""
-        if new_state and new_state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+        if new_state and new_state.state not in (
+            STATE_UNKNOWN,
+            STATE_UNAVAILABLE,
+        ):
             self._temperature = temperature_state_as_celcius(new_state)
 
         self.async_schedule_update_ha_state(True)
 
     def humidity_state_listener(self, entity, old_state, new_state):
         """Handle humidity device state changes."""
-        if new_state and new_state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+        if new_state and new_state.state not in (
+            STATE_UNKNOWN,
+            STATE_UNAVAILABLE,
+        ):
             self._humidity = float(new_state.state)
 
         self.async_schedule_update_ha_state(True)

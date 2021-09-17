@@ -4,7 +4,13 @@
   "documentation": "https://github.com/lymanepp/thermal_comfort/",
   "issue_tracker": "https://github.com/lymanepp/thermal_comfort/issues",
   "dependencies": [],
-  "codeowners": ["@dolezsa", "@poppypop", "@johnboiles", "@d3m3trius", "@lymanepp"],
+  "codeowners": [
+    "@dolezsa",
+    "@poppypop",
+    "@johnboiles",
+    "@d3m3trius",
+    "@lymanepp"
+  ],
   "requirements": [],
   "version": "1.0.0",
   "iot_class": "calculated"
