@@ -1,3 +1,4 @@
+"""Support for displaying absolutehumidity, heatindex, dewpoint, temperature perception, simmerindex or simmerzone."""
 import logging
 import math
 from typing import Optional
