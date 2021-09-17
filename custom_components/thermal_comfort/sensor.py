@@ -42,6 +42,8 @@ DEFAULT_SENSOR_TYPES = [
     "heatindex",
     "dewpoint",
     "perception",
+    "simmerindex",
+    "simmerzone",
 ]
 
 SENSOR_SCHEMA = vol.Schema(
@@ -80,6 +82,16 @@ SENSOR_TYPES = {
     "perception": [
         None,
         "Thermal Perception",
+        None
+    ],
+    "simmerindex": [
+        DEVICE_CLASS_TEMPERATURE,
+        "Simmer Index",
+        TEMP_CELSIUS
+    ],
+    "simmerzone": [
+        None,
+        "Simmer Zone",
         None
     ],
 }
@@ -258,6 +270,41 @@ class SensorThermalComfort(Entity):
         abs_humidity /= abs_temperature
         return round(abs_humidity, 2)
 
+    def compute_simmer_index(temperature, humidity):
+        """https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
+        fahrenheit = util.temperature.celsius_to_fahrenheit(temperature)
+
+        if fahrenheit < 70:
+            simmer_index = fahrenheit
+        else:
+            simmer_index = (
+                1.98 * (fahrenheit - (0.55 - (0.0055 * humidity)) * (fahrenheit - 58.0))
+                - 56.83
+            )
+
+        return round(util.temperature.fahrenheit_to_celsius(simmer_index), 2)
+
+    def compute_simmer_zone(temperature, humidity):
+        """https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
+        simmer_index = compute_simmer_index(temperature, humidity)
+        if simmer_index < 21.1:
+            return ""
+        if simmer_index < 25.0:
+            return "Slightly cool"
+        if simmer_index < 28.3:
+            return "Comfortable"
+        if simmer_index < 32.8:
+            return "Slightly warm"
+        if simmer_index < 37.8:
+            return "Increasing discomfort"
+        if simmer_index < 44.4:
+            return "Extremely warm"
+        if simmer_index < 51.7:
+            return "Danger of heatstroke"
+        if simmer_index < 65.6:
+            return "Extreme danger of heatstroke"
+        return "Circulatory collapse imminent"
+
     # Sensor Properties
 
     @property
@@ -312,6 +359,10 @@ class SensorThermalComfort(Entity):
                 value = compute_perception(self._temperature, self._humidity)
             elif self._sensor_type == "absolutehumidity":
                 value = compute_absolute_humidity(self._temperature, self._humidity)
+            elif self._sensor_type == "simmerindex":
+                value = compute_simmer_index(self._temperature, self._humidity)
+            elif self._sensor_type == "simmerzone":
+                value = compute_simmer_zone(self._temperature, self._humidity)
 
         self._state = value
         self._device_state_attributes[ATTR_TEMPERATURE] = self._temperature
