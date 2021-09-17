@@ -154,7 +154,7 @@ class SensorThermalComfort(Entity):
             STATE_UNKNOWN,
             STATE_UNAVAILABLE,
         ):
-            self._temperature = temperature_state_as_celcius(temperature_state)
+            self._temperature = SensorThermalComfort.temperature_state_as_celcius(temperature_state)
 
         humidity_state = hass.states.get(humidity_entity)
         if humidity_state and humidity_state.state not in (
@@ -169,7 +169,7 @@ class SensorThermalComfort(Entity):
             STATE_UNKNOWN,
             STATE_UNAVAILABLE,
         ):
-            self._temperature = temperature_state_as_celcius(new_state)
+            self._temperature = SensorThermalComfort.temperature_state_as_celcius(new_state)
 
         self.async_schedule_update_ha_state(True)
 
@@ -235,7 +235,7 @@ class SensorThermalComfort(Entity):
     @staticmethod
     def compute_perception(temperature, humidity):
         """https://en.wikipedia.org/wiki/Dew_point"""
-        dew_point = compute_dew_point(temperature, humidity)
+        dew_point = SensorThermalComfort.compute_dew_point(temperature, humidity)
         if dew_point < 10:
             return "A bit dry for some"
         if dew_point < 13:
@@ -347,17 +347,17 @@ class SensorThermalComfort(Entity):
         value = None
         if self._temperature and self._humidity:
             if self._sensor_type == "dewpoint":
-                value = compute_dew_point(self._temperature, self._humidity)
+                value = SensorThermalComfort.compute_dew_point(self._temperature, self._humidity)
             elif self._sensor_type == "heatindex":
-                value = compute_heat_index(self._temperature, self._humidity)
+                value = SensorThermalComfort.compute_heat_index(self._temperature, self._humidity)
             elif self._sensor_type == "perception":
-                value = compute_perception(self._temperature, self._humidity)
+                value = SensorThermalComfort.compute_perception(self._temperature, self._humidity)
             elif self._sensor_type == "absolutehumidity":
-                value = compute_absolute_humidity(self._temperature, self._humidity)
+                value = SensorThermalComfort.compute_absolute_humidity(self._temperature, self._humidity)
             elif self._sensor_type == "simmerindex":
-                value = compute_simmer_index(self._temperature, self._humidity)
+                value = SensorThermalComfort.compute_simmer_index(self._temperature, self._humidity)
             elif self._sensor_type == "simmerzone":
-                value = compute_simmer_zone(self._temperature, self._humidity)
+                value = SensorThermalComfort.compute_simmer_zone(self._temperature, self._humidity)
 
         self._state = value
         self._device_state_attributes[ATTR_TEMPERATURE] = self._temperature
