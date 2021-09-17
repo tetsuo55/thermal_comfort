@@ -182,6 +182,7 @@ class SensorThermalComfort(Entity):
 
         self.async_schedule_update_ha_state(True)
 
+    @staticmethod
     def temperature_state_as_celcius(temperature_state):
         unit = temperature_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
         temp = util.convert(temperature_state.state, float)
@@ -189,6 +190,7 @@ class SensorThermalComfort(Entity):
             temp = util.temperature.fahrenheit_to_celsius(temp)
         return temp
 
+    @staticmethod
     def compute_dew_point(temperature, humidity):
         """http://wahiduddin.net/calc/density_algorithms.htm"""
         a0 = 373.15 / (273.15 + temperature)
@@ -202,6 +204,7 @@ class SensorThermalComfort(Entity):
         td = (241.88 * td) / (17.558 - td)
         return round(td, 2)
 
+    @staticmethod
     def compute_heat_index(temperature, humidity):
         """http://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml"""
         fahrenheit = util.temperature.celsius_to_fahrenheit(temperature)
@@ -228,6 +231,7 @@ class SensorThermalComfort(Entity):
 
         return round(util.temperature.fahrenheit_to_celsius(heat_index), 2)
 
+    @staticmethod
     def compute_perception(temperature, humidity):
         """https://en.wikipedia.org/wiki/Dew_point"""
         dew_point = compute_dew_point(temperature, humidity)
@@ -247,6 +251,7 @@ class SensorThermalComfort(Entity):
             return "Extremely uncomfortable"
         return "Severely high"
 
+    @staticmethod
     def compute_absolute_humidity(temperature, humidity):
         """https://carnotcycle.wordpress.com/2012/08/04/how-to-convert-relative-humidity-to-absolute-humidity/"""
         abs_temperature = temperature + 273.15
@@ -257,6 +262,7 @@ class SensorThermalComfort(Entity):
         abs_humidity /= abs_temperature
         return round(abs_humidity, 2)
 
+    @staticmethod
     def compute_simmer_index(temperature, humidity):
         """https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
         fahrenheit = util.temperature.celsius_to_fahrenheit(temperature)
@@ -271,6 +277,7 @@ class SensorThermalComfort(Entity):
 
         return round(util.temperature.fahrenheit_to_celsius(simmer_index), 2)
 
+    @staticmethod
     def compute_simmer_zone(temperature, humidity):
         """https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
         simmer_index = compute_simmer_index(temperature, humidity)
