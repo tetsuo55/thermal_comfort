@@ -121,7 +121,7 @@ class SensorThermalComfort(Entity):
         entity_picture_template,
         sensor_type,
     ):
-        # Initialize the sensor.
+        """Initialize thermal comfort sensor."""
         self.hass = hass
         self.entity_id = async_generate_entity_id(
             ENTITY_ID_FORMAT, f"{device_id}_{sensor_type}", hass=hass
@@ -189,6 +189,7 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def temperature_state_as_celcius(temperature_state):
+        """Convert temperature to celcius."""
         unit = temperature_state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
         temp = util.convert(temperature_state.state, float)
         if unit == TEMP_FAHRENHEIT:
@@ -197,7 +198,8 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def compute_dew_point(temperature, humidity):
-        """http://wahiduddin.net/calc/density_algorithms.htm"""
+        """Calculate the dew point.
+           http://wahiduddin.net/calc/density_algorithms.htm"""
         a0 = 373.15 / (273.15 + temperature)
         sum = -7.90298 * (a0 - 1)
         sum += 5.02808 * math.log(a0, 10)
@@ -211,7 +213,8 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def compute_heat_index(temperature, humidity):
-        """http://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml"""
+        """Calculate the heat index.
+           http://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml"""
         fahrenheit = util.temperature.celsius_to_fahrenheit(temperature)
         heat_index = 0.5 * (
             fahrenheit + 61.0 + ((fahrenheit - 68.0) * 1.2) + (humidity * 0.094)
@@ -238,7 +241,8 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def compute_perception(temperature, humidity):
-        """https://en.wikipedia.org/wiki/Dew_point"""
+        """calculate thermal perception value.
+           https://en.wikipedia.org/wiki/Dew_point"""
         dew_point = SensorThermalComfort.compute_dew_point(temperature, humidity)
         if dew_point < 10:
             return "A bit dry for some"
@@ -258,7 +262,8 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def compute_absolute_humidity(temperature, humidity):
-        """https://carnotcycle.wordpress.com/2012/08/04/how-to-convert-relative-humidity-to-absolute-humidity/"""
+        """Calculate absolute humidity.
+           https://carnotcycle.wordpress.com/2012/08/04/how-to-convert-relative-humidity-to-absolute-humidity/"""
         abs_temperature = temperature + 273.15
         abs_humidity = 6.112
         abs_humidity *= math.exp((17.67 * temperature) / (243.5 + temperature))
@@ -269,7 +274,8 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def compute_simmer_index(temperature, humidity):
-        """https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
+        """Calculate simmer index.
+           https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
         fahrenheit = util.temperature.celsius_to_fahrenheit(temperature)
 
         if fahrenheit < 70:
@@ -284,7 +290,8 @@ class SensorThermalComfort(Entity):
 
     @staticmethod
     def compute_simmer_zone(temperature, humidity):
-        """https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
+        """Calculate simmer zone.
+           https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index"""
         simmer_index = SensorThermalComfort.compute_simmer_index(temperature, humidity)
         if simmer_index < 21.1:
             return ""
